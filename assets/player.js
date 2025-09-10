@@ -1,14 +1,22 @@
 /* Player logic: supports YouTube, Vimeo, direct MP4 via ?video=... */
-(function() {
+(function () {
   const qs = new URLSearchParams(location.search);
   const videoURL = qs.get("video");
+  const customTitle = qs.get("title");
 
   const container = document.getElementById("player-container");
   const overlay = document.getElementById("overlay");
   const startBtn = document.getElementById("startBtn");
 
+  // Update page title if custom title is provided
+  if (customTitle) {
+    document.title = customTitle + " - Happy Moment Player";
+  }
+
   if (!videoURL) {
-    container.innerHTML = `<div style="display:grid;place-items:center;height:100%;color:white;padding:24px;text-align:center">
+    container.innerHTML = `
+    <a href="./generate-video.html" style="position: absolute; top: 20px; right: 20px; color: white; text-decoration: none; background: rgba(255, 255, 255, 0.2); padding: 10px 15px; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">🎬 Generate Link</a>
+    <div style="display:grid;place-items:center;height:100%;color:white;padding:24px;text-align:center">
       <div>
         <h1>No video specified</h1>
         <p>Append <code>?video=&lt;URL&gt;</code> with a YouTube/Vimeo/direct MP4 link.</p>
@@ -37,18 +45,22 @@
       if (u.searchParams.get("v")) return u.searchParams.get("v");
       // /embed/ID or /shorts/ID
       const parts = u.pathname.split("/").filter(Boolean);
-      const idx = parts.findIndex(p => p === "embed" || p === "shorts" || p === "live");
-      if (idx >= 0 && parts[idx+1]) return parts[idx+1];
+      const idx = parts.findIndex(
+        (p) => p === "embed" || p === "shorts" || p === "live"
+      );
+      if (idx >= 0 && parts[idx + 1]) return parts[idx + 1];
       // last fallback: last segment
       return parts.pop();
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
   function getVimeoId(url) {
     try {
       const u = new URL(url);
       // URLs may look like /manage/videos/ID or /ID
       const parts = u.pathname.split("/").filter(Boolean);
-      const idx = parts.findIndex(p => p === "videos" || p === "manage");
+      const idx = parts.findIndex((p) => p === "videos" || p === "manage");
       if (idx >= 0) {
         // if .../manage/videos/123456789
         const last = parts[parts.length - 1];
@@ -58,7 +70,9 @@
       const last = parts[parts.length - 1];
       if (/^\d+$/.test(last)) return last;
       return null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 
   function buildYouTubeEmbed(id) {
@@ -67,7 +81,7 @@
       playsinline: "1",
       rel: "0",
       modestbranding: "1",
-      mute: "1" // improves autoplay reliability on mobile
+      mute: "1", // improves autoplay reliability on mobile
     });
     return `https://www.youtube.com/embed/${id}?${params.toString()}`;
   }
@@ -79,7 +93,7 @@
       playsinline: "1",
       title: "0",
       byline: "0",
-      portrait: "0"
+      portrait: "0",
     });
     return `https://player.vimeo.com/video/${id}?${params.toString()}`;
   }
@@ -88,7 +102,10 @@
     const iframe = document.createElement("iframe");
     iframe.src = src;
     iframe.setAttribute("frameborder", "0");
-    iframe.setAttribute("allow", "autoplay; fullscreen; picture-in-picture; accelerometer; gyroscope");
+    iframe.setAttribute(
+      "allow",
+      "autoplay; fullscreen; picture-in-picture; accelerometer; gyroscope"
+    );
     iframe.setAttribute("allowfullscreen", "true");
     iframe.className = "player-container";
     container.appendChild(iframe);
@@ -122,6 +139,16 @@
   }
 
   function showOverlay(startFn) {
+    // Update overlay content with custom title if provided
+    if (customTitle) {
+      const overlayTitle = overlay.querySelector("h1");
+      const overlayText = overlay.querySelector("p");
+      if (overlayTitle) overlayTitle.textContent = customTitle;
+      if (overlayText)
+        overlayText.textContent =
+          "Ready to watch? Tap to start your video in fullscreen!";
+    }
+
     overlay.classList.remove("hidden");
     function handler() {
       overlay.classList.add("hidden");
@@ -174,7 +201,7 @@
       if (!isPlaying) {
         showOverlay(() => {
           if (el.tagName === "VIDEO") {
-            el.play().catch(()=>{});
+            el.play().catch(() => {});
             tryFullscreenAndLandscape(el);
           } else {
             tryFullscreenAndLandscape(document.documentElement);

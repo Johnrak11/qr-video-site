@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>🎬 Video Link Generator</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <style>
+    .generator-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .generator-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .generator-card h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      box-sizing: border-box;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn {
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .result-section {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      display: none;
+    }
+    
+    .result-section.show {
+      display: block;
+    }
+    
+    .generated-url {
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      padding: 15px;
+      border-radius: 8px;
+      word-break: break-all;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    
+    .copy-btn {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      margin-bottom: 0;
+    }
+    
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .examples {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .examples h3 {
+      margin-bottom: 10px;
+    }
+    
+    .examples code {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <a href="./index.html" class="back-link">← Back to Player</a>
+  
+  <div class="generator-container">
+    <div class="generator-card">
+      <h1>🎬 Video Link Generator</h1>
+      <p style="text-align: center; margin-bottom: 30px; opacity: 0.9;">Create shareable links for your videos</p>
+      
+      <form id="videoForm">
+        <div class="form-group">
+          <label for="videoUrl">Video URL:</label>
+          <input type="url" id="videoUrl" placeholder="Paste your YouTube, Vimeo, or direct video URL here..." required>
+        </div>
+        
+        <div class="form-group">
+          <label for="customTitle">Custom Title (Optional):</label>
+          <input type="text" id="customTitle" placeholder="e.g., Happy Birthday John!">
+        </div>
+        
+        <button type="submit" class="btn" id="generateBtn">
+          🎉 Generate Shareable Link
+        </button>
+      </form>
+      
+      <div id="resultSection" class="result-section">
+        <h3>🎊 Your Shareable Link:</h3>
+        <div id="generatedUrl" class="generated-url"></div>
+        <button class="btn copy-btn" id="copyBtn">
+          📋 Copy Link
+        </button>
+        <button class="btn" id="generateAnother" style="background: linear-gradient(45deg, #a8edea, #fed6e3);">
+          ➕ Generate Another
+        </button>
+      </div>
+      
+      <div class="examples">
+        <h3>📝 Supported URLs:</h3>
+        <p>• YouTube: <code>https://youtu.be/VIDEO_ID</code></p>
+        <p>• YouTube: <code>https://youtube.com/watch?v=VIDEO_ID</code></p>
+        <p>• Vimeo: <code>https://vimeo.com/123456789</code></p>
+        <p>• Direct MP4: <code>https://example.com/video.mp4</code></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('videoForm');
+    const resultSection = document.getElementById('resultSection');
+    const generatedUrl = document.getElementById('generatedUrl');
+    const copyBtn = document.getElementById('copyBtn');
+    const generateAnotherBtn = document.getElementById('generateAnother');
+    const videoUrlInput = document.getElementById('videoUrl');
+    const customTitleInput = document.getElementById('customTitle');
+    
+    // Get current domain
+    const currentDomain = window.location.origin;
+    
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const videoUrl = videoUrlInput.value.trim();
+      const customTitle = customTitleInput.value.trim();
+      
+      if (!videoUrl) {
+        alert('Please enter a video URL');
+        return;
+      }
+      
+      // Generate the shareable URL
+      let shareableUrl = `${currentDomain}/?video=${encodeURIComponent(videoUrl)}`;
+      
+      // Add custom title if provided
+      if (customTitle) {
+        shareableUrl += `&title=${encodeURIComponent(customTitle)}`;
+      }
+      
+      // Display result
+      generatedUrl.textContent = shareableUrl;
+      resultSection.classList.add('show');
+      
+      // Scroll to result
+      resultSection.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    copyBtn.addEventListener('click', async function() {
+      const url = generatedUrl.textContent;
+      
+      try {
+        await navigator.clipboard.writeText(url);
+        copyBtn.textContent = '✅ Copied!';
+        copyBtn.style.background = 'linear-gradient(45deg, #2ecc71, #27ae60)';
+        
+        setTimeout(() => {
+          copyBtn.textContent = '📋 Copy Link';
+          copyBtn.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+        }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        copyBtn.textContent = '✅ Copied!';
+        setTimeout(() => {
+          copyBtn.textContent = '📋 Copy Link';
+        }, 2000);
+      }
+    });
+    
+    generateAnotherBtn.addEventListener('click', function() {
+      form.reset();
+      resultSection.classList.remove('show');
+      videoUrlInput.focus();
+    });
+    
+    // Auto-focus on the input field
+    videoUrlInput.focus();
+  </script>
+</body>
+
+</html>
