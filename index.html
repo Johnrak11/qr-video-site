@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>🎉 Happy Moment Player</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+  <div id="app">
+    <div id="player-container" class="player-container"></div>
+    <div id="overlay" class="overlay hidden">
+      <div class="card">
+        <h1>Tap to Play</h1>
+        <p>Autoplay was blocked by your browser. Tap once to start in fullscreen.</p>
+        <button id="startBtn">Play</button>
+      </div>
+    </div>
+    <noscript>
+      Please enable JavaScript to play this video.
+    </noscript>
+  </div>
+
+  <script src="./assets/player.js"></script>
+</body>
+
+</html>
